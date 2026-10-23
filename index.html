@@ -4,51 +4,48 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#123d32">
-  <meta name="description" content="হাদীসের উৎস, রেফারেন্স ও তাহকীক-সংক্রান্ত তথ্য অনুসন্ধানের প্রাথমিক ডেমো।">
-  <title>হাদীস গবেষণা | Hadith Research</title>
+  <meta name="description" content="বাংলা ও আরবি হাদিস অনুসন্ধান, রেফারেন্স যাচাই ও গবেষণা উৎসের সহায়ক প্ল্যাটফর্ম।">
+  <title>হাদিস গবেষণা | Hadith Research Platform</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="brand">
-      <div class="brand-mark" aria-hidden="true">ح</div>
-      <div>
-        <div class="brand-title">হাদীস গবেষণা</div>
-        <div class="brand-subtitle">Hadith Research & Verification</div>
-      </div>
-    </div>
-    <a class="header-link" href="#about">প্রকল্প সম্পর্কে</a>
+    <a class="brand" href="#" aria-label="হাদিস গবেষণা হোম">
+      <span class="brand-mark" aria-hidden="true">ح</span>
+      <span><strong class="brand-title">হাদিস গবেষণা</strong><small class="brand-subtitle">Hadith Research Platform</small></span>
+    </a>
+    <nav class="top-nav">
+      <a href="#resources">গবেষণা উৎস</a>
+      <a href="#guide">ব্যবহার নির্দেশিকা</a>
+      <a href="#about">প্রকল্প সম্পর্কে</a>
+    </nav>
   </header>
 
   <main>
     <section class="hero">
-      <p class="eyebrow">দলিলভিত্তিক অনুসন্ধান</p>
-      <h1>হাদীস খুঁজুন, উৎস যাচাই করুন</h1>
-      <p class="hero-copy">আরবি ইবারত, বাংলা শব্দ বা হাদীসের রেফারেন্স দিয়ে অনুসন্ধান করুন। প্রতিটি ফলাফলে উৎস ও যাচাই-অবস্থা আলাদাভাবে দেখানো হবে।</p>
-
+      <p class="eyebrow">দলিলভিত্তিক অনুসন্ধান • সতর্ক যাচাই</p>
+      <h1>হাদিস খুঁজুন, উৎস মিলিয়ে দেখুন</h1>
+      <p class="hero-copy">আরবি ইবারত, বাংলা শব্দ, গ্রন্থের নাম বা রেফারেন্স দিয়ে স্থানীয় ডেমো ডেটা অনুসন্ধান করুন। গবেষণার জন্য নির্ভরযোগ্য বাহ্যিক উৎসও এক জায়গা থেকে খুলতে পারবেন।</p>
       <form id="search-form" class="search-form">
-        <label class="sr-only" for="search-input">হাদীস অনুসন্ধান</label>
+        <label class="sr-only" for="search-input">হাদিস অনুসন্ধান</label>
         <input id="search-input" type="search" placeholder="আরবি, বাংলা বা রেফারেন্স লিখুন…" autocomplete="off">
         <button type="submit">অনুসন্ধান</button>
       </form>
       <div class="search-hints">
         <button class="hint" type="button" data-query="إنما الأعمال بالنيات">আরবি উদাহরণ</button>
-        <button class="hint" type="button" data-query="নিয়তের">বাংলা উদাহরণ</button>
+        <button class="hint" type="button" data-query="নিয়ত">বাংলা উদাহরণ</button>
         <button class="hint" type="button" data-query="বুখারী ১">রেফারেন্স উদাহরণ</button>
       </div>
     </section>
 
     <div class="notice" role="note">
-      <strong>গুরুত্বপূর্ণ:</strong> এটি প্রাথমিক ডেমো। এখানে অল্প কিছু উদাহরণ ডেটা আছে; এটিকে পূর্ণাঙ্গ হাদীস ডেটাবেস বা স্বয়ংক্রিয় তাহকীক হিসেবে ব্যবহার করবেন না।
+      <strong>গুরুত্বপূর্ণ সতর্কতা:</strong> এটি ছোট ডেমো ডেটাসহ একটি গবেষণা-সহায়ক। এটি পূর্ণাঙ্গ হাদিস ডেটাবেস নয় এবং স্বয়ংক্রিয়ভাবে হাদিসের মান নির্ধারণ করে না। “উৎস সংযুক্ত” মানে শুধু রেফারেন্স লিংক আছে—স্বতন্ত্র তাহকীক সম্পন্ন হয়েছে, এমন নয়।
     </div>
 
     <section class="workspace" aria-label="অনুসন্ধানের ফলাফল">
       <div class="results-panel">
         <div class="section-heading">
-          <div>
-            <h2>অনুসন্ধানের ফলাফল</h2>
-            <p id="result-count" class="muted">ডেমো ডেটা লোড হচ্ছে…</p>
-          </div>
+          <div><h2>অনুসন্ধানের ফলাফল</h2><p id="result-count" class="muted">ডেমো ডেটা লোড হচ্ছে…</p></div>
           <select id="status-filter" aria-label="যাচাই-অবস্থা অনুযায়ী ফিল্টার">
             <option value="all">সব অবস্থা</option>
             <option value="source-listed">উৎস সংযুক্ত</option>
@@ -57,46 +54,45 @@
         </div>
         <div id="results-list" class="results-list"></div>
         <div id="empty-state" class="empty-state hidden">
-          <div class="empty-icon">⌕</div>
-          <h3>কোনো মিল পাওয়া যায়নি</h3>
-          <p>অন্য বানান, আরবি ইবারতের ছোট অংশ বা রেফারেন্স দিয়ে চেষ্টা করুন। না পাওয়া মানেই হাদীসটি জাল নয়।</p>
+          <div class="empty-icon">⌕</div><h3>কোনো মিল পাওয়া যায়নি</h3>
+          <p>অন্য বানান, আরবি ইবারতের ছোট অংশ বা রেফারেন্স দিয়ে চেষ্টা করুন। ফলাফল না পাওয়া মানেই হাদিসটি জাল নয়।</p>
         </div>
       </div>
-
       <aside id="detail-panel" class="detail-panel">
-        <div class="detail-placeholder">
-          <div class="placeholder-icon">📖</div>
-          <h2>একটি ফলাফল নির্বাচন করুন</h2>
-          <p>হাদীসের মূল পাঠ, উৎস, রেফারেন্স ও গবেষণা-অবস্থা এখানে দেখা যাবে।</p>
-        </div>
+        <div class="detail-placeholder"><div class="placeholder-icon">📖</div><h2>একটি ফলাফল নির্বাচন করুন</h2><p>মূল পাঠ, উৎস, রেফারেন্স ও গবেষণা-অবস্থা এখানে দেখা যাবে।</p></div>
       </aside>
     </section>
 
-    <section id="about" class="about-section">
-      <h2>এই ডেমো কী করে?</h2>
-      <div class="about-grid">
-        <article class="about-card">
-          <span class="card-icon">⌕</span>
-          <h3>টেক্সট সার্চ</h3>
-          <p>ছোট ডেমো ডেটার মধ্যে আরবি ও বাংলা শব্দ এবং রেফারেন্স খোঁজে।</p>
-        </article>
-        <article class="about-card">
-          <span class="card-icon">📚</span>
-          <h3>উৎস প্রদর্শন</h3>
-          <p>রেকর্ডে সংরক্ষিত গ্রন্থ ও রেফারেন্স আলাদাভাবে দেখায়।</p>
-        </article>
-        <article class="about-card">
-          <span class="card-icon">✓</span>
-          <h3>সতর্ক যাচাই</h3>
-          <p>ডেটাবেসে তথ্য না থাকলে নিজে থেকে কোনো হুকুম তৈরি করে না।</p>
-        </article>
+    <section id="resources" class="section-block">
+      <div class="section-intro"><p class="eyebrow dark">গবেষণার সহায়ক</p><h2>হাদিস গবেষণার বাহ্যিক উৎস</h2><p>প্রতিটি উৎস নতুন ট্যাবে খুলবে। ফলাফল ও গ্রেড নিজে যাচাই করুন; উৎসের লিংক থাকা মানেই ডেটাবেস সরাসরি সংযুক্ত নয়।</p></div>
+      <div class="resource-grid">
+        <article class="resource-card"><span class="resource-number">01</span><h3>Ad-Durar as-Saniyyah</h3><p>হাদিস অনুসন্ধান ও তাহকীক-সংক্রান্ত তথ্যের জন্য।</p><a href="https://dorar.net/hadith" target="_blank" rel="noopener noreferrer">হাদিস অনুসন্ধান ↗</a><a href="https://dorar.net/api-services/hadith" target="_blank" rel="noopener noreferrer">API ডকুমেন্টেশন ↗</a></article>
+        <article class="resource-card"><span class="resource-number">02</span><h3>Sunnah.com</h3><p>হাদিসের পাঠ, অনুবাদ, গ্রন্থ ও নম্বরের রেফারেন্স।</p><a href="https://sunnah.com" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন ↗</a><a href="https://sunnah.com/developers" target="_blank" rel="noopener noreferrer">Developer তথ্য ↗</a></article>
+        <article class="resource-card"><span class="resource-number">03</span><h3>আল-মাকতাবা আশ-শামিলাহ</h3><p>আরবি ইসলামি গ্রন্থ ও মূল উৎস অনুসন্ধান।</p><a href="https://shamela.ws" target="_blank" rel="noopener noreferrer">গ্রন্থাগার খুলুন ↗</a></article>
+        <article class="resource-card"><span class="resource-number">04</span><h3>iHadis</h3><p>বাংলা ভাষায় হাদিস ও অনুবাদ অনুসন্ধান।</p><a href="https://ihadis.com" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন ↗</a></article>
       </div>
     </section>
 
-    <footer>
-      <p>Hadith Research — মুক্ত-উৎস প্রাথমিক প্রকল্প</p>
-      <p class="muted">প্রকাশের আগে ডেটা, অনুবাদ, নম্বর ও ব্যবহারের অনুমতি যাচাই করুন।</p>
-    </footer>
+    <section id="guide" class="section-block guide-block">
+      <div class="section-intro"><p class="eyebrow dark">ধাপে ধাপে</p><h2>বাংলা ব্যবহার নির্দেশিকা</h2></div>
+      <ol class="guide-list">
+        <li><strong>ছোট অংশ দিয়ে খুঁজুন:</strong> আরবি ইবারত বা বাংলা অনুবাদের কয়েকটি অনন্য শব্দ লিখুন।</li>
+        <li><strong>রেফারেন্স মিলিয়ে নিন:</strong> গ্রন্থের নাম, কিতাব/অধ্যায়, হাদিস নম্বর এবং সংস্করণ নোট করুন।</li>
+        <li><strong>একাধিক উৎস দেখুন:</strong> প্রাসঙ্গিক হলে বাহ্যিক গবেষণা উৎসগুলো খুলে পাঠ ও তথ্য তুলনা করুন।</li>
+        <li><strong>গ্রেডের প্রমাণ লিখুন:</strong> কে, কোন গ্রন্থে, কী পদ্ধতিতে হাদিসের মান নির্ধারণ করেছেন—সেই তথ্য ছাড়া নিজের অনুমানে গ্রেড দেবেন না।</li>
+        <li><strong>ডুপ্লিকেট সতর্কতা দেখুন:</strong> একই রেফারেন্স বা একরকম পাঠের রেকর্ড চিহ্নিত হতে পারে। একই পাঠ হলেই একই সনদ বা একই হাদিস প্রমাণিত হয় না।</li>
+      </ol>
+    </section>
+
+    <section id="about" class="section-block about-section">
+      <div class="section-intro"><p class="eyebrow dark">প্রকল্প সম্পর্কে</p><h2>গবেষণায় সহায়তা, চূড়ান্ত রায় নয়</h2><p>এই ওয়েব অ্যাপটি ব্রাউজারে চলে এবং GitHub Pages-এ প্রকাশ করা যায়। বর্তমানে ডেমো ডেটা ব্যবহার করা হয়। বহিরাগত সাইটের ডেটাবেস, API বা স্বয়ংক্রিয় তাহকীক এখানে চালু নেই।</p></div>
+      <div class="about-grid">
+        <article class="about-card"><span class="card-icon">⌕</span><h3>স্থানীয় টেক্সট সার্চ</h3><p>ডেমো রেকর্ডের আরবি, বাংলা, গ্রন্থ ও রেফারেন্স খোঁজে।</p></article>
+        <article class="about-card"><span class="card-icon">⧉</span><h3>ডুপ্লিকেট সতর্কতা</h3><p>একই রেফারেন্স বা স্বাভাবিকীকৃত পাঠের সম্ভাব্য মিল দেখায়। এটি চূড়ান্ত হাদিস-পরিচয় নির্ধারণ নয়।</p></article>
+        <article class="about-card"><span class="card-icon">✓</span><h3>সতর্ক যাচাই</h3><p>প্রমাণ না থাকলে নিজে থেকে সহিহ, যঈফ বা মাওযূর হুকুম তৈরি করে না।</p></article>
+      </div>
+    </section>
+    <footer><p>Hadith Research Platform · মুক্ত-উৎস প্রাথমিক প্রকল্প</p><p class="muted">প্রকাশের আগে ডেটা, অনুবাদ, রেফারেন্স, লাইসেন্স ও ব্যবহারের অনুমতি যাচাই করুন।</p></footer>
   </main>
   <script src="app.js"></script>
 </body>

@@ -1,3 +1,5 @@
+/* Hadith Research Platform — demo app; not an automatic hadith grader. */
+"use strict";
 
 const form = document.querySelector("#search-form");
 const searchInput = document.querySelector("#search-input");
@@ -9,476 +11,155 @@ const detailPanel = document.querySelector("#detail-panel");
 
 let hadithData = [];
 let activeId = null;
+let currentResults = [];
 
 function normalizeText(value) {
   return String(value ?? "")
     .normalize("NFKC")
     .toLowerCase()
     .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "")
-    .replace(/[إأآٱ]/g, "ا")
-    .replace(/ى/g, "ي")
-    .replace(/ـ/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/[إأآٱ]/g, "ا").replace(/ى/g, "ي")
+    .replace(/ؤ/g, "و").replace(/ئ/g, "ي").replace(/ـ/g, "")
+    .replace(/[.,،؛:!?؟()[\]{}"'“”‘’]/g, " ")
+    .replace(/\s+/g, " ").trim();
 }
-
 function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
 }
-
-function getSource(item) {
-  return item.sourceUrl || item.source_url || "";
-}
-
-function getStatus(item) {
-  return item.status ||
-    (getSource(item) ? "source-listed" : "needs-review");
-}
-
-function searchableText(item) {
+function itemText(item) {
   return normalizeText([
-    item.title,
-    item.arabic,
-    item.translation,
-    item.collection,
-    item.book,
-    item.reference,
-    item.narrator,
-    item.grade,
-    item.note
-  ].filter(Boolean).join(" "));
+    item.title, item.arabic, item.translation, item.collection, item.book,
+    item.reference, item.narrator, item.grade, item.sourceName, item.evidence
+  ].join(" "));
 }
-
+function searchItems(query) {
+  const q = normalizeText(query);
+  const status = statusFilter.value;
+  return hadithData.filter(item => {
+    const statusMatches = status === "all" || item.status === status;
+    return statusMatches && (!q || itemText(item).includes(q));
+  });
+}
+function duplicateGroups(items) {
+  const groups = new Map();
+  for (const item of items) {
+    const key = normalizeText(item.arabic || item.translation || "");
+    if (!key) continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  }
+  return [...groups.values()].filter(group => group.length > 1);
+}
+function isPossibleDuplicate(item) {
+  const key = normalizeText(item.arabic || item.translation || "");
+  if (!key) return false;
+  return hadithData.some(other => other.id !== item.id &&
+    normalizeText(other.arabic || other.translation || "") === key);
+}
 function renderPlaceholder() {
-  detailPanel.innerHTML = `
-    <div class="detail-placeholder">
-      <div class="placeholder-icon">📖</div>
-      <h2>একটি ফলাফল নির্বাচন করুন</h2>
-      <p>হাদীসের পাঠ, উৎস ও রেফারেন্স এখানে দেখা যাবে।</p>
-    </div>`;
+  detailPanel.innerHTML = `<div class="detail-placeholder"><div class="placeholder-icon">📖</div><h2>একটি ফলাফল নির্বাচন করুন</h2><p>মূল পাঠ, উৎস, রেফারেন্স ও গবেষণা-অবস্থা এখানে দেখা যাবে।</p></div>`;
 }
-
-function renderDetail(item) {
-  const sourceUrl = getSource(item);
-
-  detailPanel.innerHTML = `
-    <h2>${escapeHtml(item.title || item.collection || "হাদীস")}</h2>
-    <section class="detail-section">
-      <h3>মূল আরবি পাঠ</h3>
-      <p class="arabic-full" lang="ar" dir="rtl">${
-        escapeHtml(item.arabic || "আরবি পাঠ যোগ করা হয়নি।")
-      }</p>
-    </section>
-    <section class="detail-section">
-      <h3>বাংলা অনুবাদ / নোট</h3>
-      <p>${escapeHtml(item.translation || item.note || "অনুবাদ যোগ করা হয়নি।")}</p>
-    </section>
-    <section class="detail-section">
-      <h3>গ্রন্থ ও রেফারেন্স</h3>
-      <p>গ্রন্থ: ${escapeHtml(item.collection || "উল্লেখ নেই")}</p>
-      <p>কিতাব: ${escapeHtml(item.book || "উল্লেখ নেই")}</p>
-      <p>রেফারেন্স: ${escapeHtml(item.reference || "উল্লেখ নেই")}</p>
-      <p>রাবি: ${escapeHtml(item.narrator || "উল্লেখ নেই")}</p>
-      <p>উৎস: ${
-        sourceUrl
-          ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">${
-              escapeHtml(item.sourceName || "মূল উৎস দেখুন")
-            }</a>`
-          : "উৎস সংযুক্ত নেই"
-      }</p>
-    </section>
-    <section class="detail-section">
-      <h3>যাচাই-অবস্থা</h3>
-      <p>${escapeHtml(item.grade || "স্বতন্ত্র তাহকীক যোগ করা হয়নি।")}</p>
-      <p>${escapeHtml(item.gradeNote || item.evidence || item.note || "")}</p>
-      <p class="muted">${escapeHtml(item.review || "উদ্ধৃতির আগে মূল উৎস যাচাই করুন।")}</p>
-    </section>
-    <div class="action-row">
-      <button class="action-button primary" id="print-report" type="button">
-        রিপোর্ট প্রিন্ট / PDF
-      </button>
-      <button class="action-button" id="copy-reference" type="button">
-        রেফারেন্স কপি
-      </button>
-    </div>
-    <p id="action-message" class="muted" aria-live="polite"></p>`;
-
-  document.querySelector("#print-report").addEventListener("click", () => {
-    window.print();
-  });
-
-  document.querySelector("#copy-reference").addEventListener("click", async () => {
-    const text = [
-      item.title || item.collection || "হাদীস",
-      item.arabic || "",
-      item.translation || "",
-      `${item.collection || ""} — ${item.reference || ""}`,
-      `উৎস: ${sourceUrl || "সংযুক্ত নয়"}`,
-      `যাচাই-অবস্থা: ${item.grade || "যাচাই করা হয়নি"}`
-    ].join("\n");
-
-    const message = document.querySelector("#action-message");
-
-    try {
-      await navigator.clipboard.writeText(text);
-      message.textContent = "রেফারেন্স কপি হয়েছে।";
-    } catch {
-      message.textContent =
-        "কপি করা যায়নি। টেক্সট নির্বাচন করে কপি করুন।";
-    }
-  });
-}
-
 function renderResults() {
-  const query = normalizeText(searchInput.value);
-  const selectedStatus = statusFilter.value;
+  currentResults = searchItems(searchInput.value);
+  resultCount.textContent = `${currentResults.length}টি ফলাফল • ডেমো ডেটা`;
+  resultsList.innerHTML = "";
+  emptyState.classList.toggle("hidden", currentResults.length !== 0);
 
-  const results = hadithData.filter(item => {
-    const statusMatches =
-      selectedStatus === "all" || getStatus(item) === selectedStatus;
-
-    const queryMatches =
-      !query || searchableText(item).includes(query);
-
-    return statusMatches && queryMatches;
-  });
-
-  resultsList.replaceChildren();
-  emptyState.classList.toggle("hidden", results.length !== 0);
-  resultCount.textContent = `মোট ${results.length}টি রেকর্ড পাওয়া গেছে।`;
-
-  results.forEach(item => {
+  currentResults.forEach(item => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className =
-      `result-card${item.id === activeId ? " selected" : ""}`;
-
-    const title = document.createElement("h3");
-    title.textContent = item.title || item.collection || "হাদীস";
-
-    const arabic = document.createElement("div");
-    arabic.className = "arabic-snippet";
-    arabic.lang = "ar";
-    arabic.dir = "rtl";
-    arabic.textContent = item.arabic || "";
-
-    const reference = document.createElement("p");
-    reference.textContent =
-      `${item.collection || "উৎস উল্লেখ নেই"} — ${item.reference || "রেফারেন্স নেই"}`;
-
-    const badge = document.createElement("p");
-    badge.textContent = getStatus(item) === "needs-review"
-      ? "আরও যাচাই প্রয়োজন"
-      : "উৎস সংযুক্ত; মান স্বয়ংক্রিয়ভাবে নিশ্চিত নয়";
-
-    button.append(title, arabic, reference, badge);
-
+    button.className = `result-card${item.id === activeId ? " selected" : ""}`;
+    button.innerHTML = `
+      <h3>${escapeHtml(item.title || item.collection || "শিরোনাম নেই")}</h3>
+      <div class="arabic-snippet" lang="ar" dir="rtl">${escapeHtml(item.arabic || "আরবি পাঠ যোগ করা হয়নি")}</div>
+      <div>${escapeHtml(item.translation || item.note || "")}</div>
+      <div class="result-meta"><span>${escapeHtml(item.collection || "গ্রন্থ উল্লেখ নেই")}</span><span>•</span><span>${escapeHtml(item.reference || "রেফারেন্স নেই")}</span>
+      <span class="pill ${item.status === "needs-review" ? "review" : ""}">${item.status === "needs-review" ? "আরও যাচাই প্রয়োজন" : "উৎস সংযুক্ত"}</span>
+      ${isPossibleDuplicate(item) ? '<span class="pill duplicate">সম্ভাব্য ডুপ্লিকেট</span>' : ""}</div>`;
     button.addEventListener("click", () => {
       activeId = item.id;
       renderResults();
       renderDetail(item);
     });
-
     resultsList.appendChild(button);
   });
-
-  if (activeId && !results.some(item => item.id === activeId)) {
+  if (activeId && !currentResults.some(item => item.id === activeId)) {
     activeId = null;
     renderPlaceholder();
   }
 }
-
-async function startApp() {
-  resultCount.textContent = "ডেমো ডেটা লোড হচ্ছে…";
-
-  try {
-    const response = await fetch("./data/hadith-demo.json");
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (!Array.isArray(data)) {
-      throw new Error("JSON ফাইলে array থাকা দরকার");
-    }
-
-    hadithData = data.map((item, index) => ({
-      ...item,
-      id: item.id || `record-${index + 1}`
-    }));
-
-    renderResults();
-  } catch (error) {
-    console.error("Hadith data loading error:", error);
-    resultCount.textContent =
-      "ডেটা লোড হয়নি। JSON ফাইলের অবস্থান ও গঠন পরীক্ষা করুন।";
-    resultsList.replaceChildren();
-    emptyState.classList.add("hidden");
-  }
-}
-
-form.addEventListener("submit", event => {
-  event.preventDefault();
-  renderResults();
-});
-
-statusFilter.addEventListener("change", renderResults);
-
-document.querySelectorAll("[data-query]").forEach(button => {
-  button.addEventListener("click", () => {
-    searchInput.value = button.dataset.query;
-    renderResults();
-  });
-});
-
-startApp();
-const form = document.querySelector("#search-form");
-const searchInput = document.querySelector("#search-input");
-const resultsList = document.querySelector("#results-list");
-const resultCount = document.querySelector("#result-count");
-const statusFilter = document.querySelector("#status-filter");
-const emptyState = document.querySelector("#empty-state");
-const detailPanel = document.querySelector("#detail-panel");
-
-let hadithData = [];
-let activeId = null;
-
-function normalizeText(value) {
-  return String(value ?? "")
-    .normalize("NFKC")
-    .toLowerCase()
-    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "")
-    .replace(/[إأآٱ]/g, "ا")
-    .replace(/ى/g, "ي")
-    .replace(/ـ/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
-}
-
-function getSource(item) {
-  return item.sourceUrl || item.source_url || "";
-}
-
-function getStatus(item) {
-  return item.status ||
-    (getSource(item) ? "source-listed" : "needs-review");
-}
-
-function searchableText(item) {
-  return normalizeText([
-    item.title,
-    item.arabic,
-    item.translation,
-    item.collection,
-    item.book,
-    item.reference,
-    item.narrator,
-    item.grade,
-    item.note
-  ].filter(Boolean).join(" "));
-}
-
-function renderPlaceholder() {
-  detailPanel.innerHTML = `
-    <div class="detail-placeholder">
-      <div class="placeholder-icon">📖</div>
-      <h2>একটি ফলাফল নির্বাচন করুন</h2>
-      <p>হাদীসের পাঠ, উৎস ও রেফারেন্স এখানে দেখা যাবে।</p>
-    </div>`;
-}
-
 function renderDetail(item) {
-  const sourceUrl = getSource(item);
-
+  const sourceUrl = item.sourceUrl || item.source_url || "";
+  const sourceName = item.sourceName || item.source_name || (sourceUrl ? "মূল উৎস খুলুন" : "কোনো উৎস সংযুক্ত নেই");
+  const source = sourceUrl
+    ? `<a class="source-link" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sourceName)} ↗</a>`
+    : escapeHtml(sourceName);
+  const duplicateNotice = isPossibleDuplicate(item)
+    ? `<div class="duplicate-note"><strong>সম্ভাব্য ডুপ্লিকেট:</strong> ডেটায় একইরকম স্বাভাবিকীকৃত পাঠ আছে। এটি একই সনদ বা একই হাদিস হওয়ার চূড়ান্ত প্রমাণ নয়।</div>` : "";
   detailPanel.innerHTML = `
-    <h2>${escapeHtml(item.title || item.collection || "হাদীস")}</h2>
-    <section class="detail-section">
-      <h3>মূল আরবি পাঠ</h3>
-      <p class="arabic-full" lang="ar" dir="rtl">${
-        escapeHtml(item.arabic || "আরবি পাঠ যোগ করা হয়নি।")
-      }</p>
-    </section>
-    <section class="detail-section">
-      <h3>বাংলা অনুবাদ / নোট</h3>
-      <p>${escapeHtml(item.translation || item.note || "অনুবাদ যোগ করা হয়নি।")}</p>
-    </section>
-    <section class="detail-section">
-      <h3>গ্রন্থ ও রেফারেন্স</h3>
-      <p>গ্রন্থ: ${escapeHtml(item.collection || "উল্লেখ নেই")}</p>
-      <p>কিতাব: ${escapeHtml(item.book || "উল্লেখ নেই")}</p>
-      <p>রেফারেন্স: ${escapeHtml(item.reference || "উল্লেখ নেই")}</p>
-      <p>রাবি: ${escapeHtml(item.narrator || "উল্লেখ নেই")}</p>
-      <p>উৎস: ${
-        sourceUrl
-          ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">${
-              escapeHtml(item.sourceName || "মূল উৎস দেখুন")
-            }</a>`
-          : "উৎস সংযুক্ত নেই"
-      }</p>
-    </section>
-    <section class="detail-section">
-      <h3>যাচাই-অবস্থা</h3>
-      <p>${escapeHtml(item.grade || "স্বতন্ত্র তাহকীক যোগ করা হয়নি।")}</p>
-      <p>${escapeHtml(item.gradeNote || item.evidence || item.note || "")}</p>
-      <p class="muted">${escapeHtml(item.review || "উদ্ধৃতির আগে মূল উৎস যাচাই করুন।")}</p>
-    </section>
-    <div class="action-row">
-      <button class="action-button primary" id="print-report" type="button">
-        রিপোর্ট প্রিন্ট / PDF
-      </button>
-      <button class="action-button" id="copy-reference" type="button">
-        রেফারেন্স কপি
-      </button>
-    </div>
-    <p id="action-message" class="muted" aria-live="polite"></p>`;
-
-  document.querySelector("#print-report").addEventListener("click", () => {
-    window.print();
-  });
-
+    <p class="eyebrow dark">হাদিসের বিবরণ</p>
+    <h2 class="detail-title">${escapeHtml(item.title || item.collection || "হাদিসের বিবরণ")}</h2>
+    <section class="detail-section"><h3>মূল আরবি পাঠ</h3><p class="arabic-full" lang="ar" dir="rtl">${escapeHtml(item.arabic || "আরবি পাঠ যোগ করা হয়নি।")}</p></section>
+    <section class="detail-section"><h3>বাংলা অনুবাদ / নোট</h3><p class="translation">${escapeHtml(item.translation || item.note || "অনুবাদ বা নোট যোগ করা হয়নি।")}</p></section>
+    <section class="detail-section"><h3>গ্রন্থ ও রেফারেন্স</h3><p>${escapeHtml(item.collection || "উল্লেখ নেই")} · ${escapeHtml(item.reference || "রেফারেন্স নেই")}</p><p>অধ্যায়: ${escapeHtml(item.book || "উল্লেখ নেই")}</p><p>বর্ণনাকারী: ${escapeHtml(item.narrator || "উল্লেখ নেই")}</p></section>
+    <section class="detail-section"><h3>যাচাই-অবস্থা</h3><p><strong>${escapeHtml(item.grade || (item.status === "needs-review" ? "যাচাই করা হয়নি" : "রেকর্ডে উৎস সংযুক্ত"))}</strong></p><p>${escapeHtml(item.gradeNote || "এই রেকর্ডের গ্রেড-সংক্রান্ত তথ্য আলাদাভাবে যাচাই করুন।")}</p><p>${escapeHtml(item.evidence || "")}</p><p>${escapeHtml(item.review || "")}</p></section>
+    <section class="detail-section"><h3>উৎস</h3><p>${source}</p></section>
+    ${duplicateNotice}
+    <div class="detail-actions"><button type="button" id="copy-reference">রেফারেন্স কপি</button><button type="button" id="print-detail">প্রিন্ট / PDF</button></div>
+  `;
   document.querySelector("#copy-reference").addEventListener("click", async () => {
-    const text = [
-      item.title || item.collection || "হাদীস",
-      item.arabic || "",
-      item.translation || "",
-      `${item.collection || ""} — ${item.reference || ""}`,
-      `উৎস: ${sourceUrl || "সংযুক্ত নয়"}`,
-      `যাচাই-অবস্থা: ${item.grade || "যাচাই করা হয়নি"}`
-    ].join("\n");
-
-    const message = document.querySelector("#action-message");
-
+    const text = `${item.collection || ""} ${item.reference || ""}\n${item.sourceUrl || item.source_url || ""}`.trim();
     try {
       await navigator.clipboard.writeText(text);
-      message.textContent = "রেফারেন্স কপি হয়েছে।";
+      showToast("রেফারেন্স কপি হয়েছে");
     } catch {
-      message.textContent =
-        "কপি করা যায়নি। টেক্সট নির্বাচন করে কপি করুন।";
+      window.prompt("রেফারেন্স কপি করুন:", text);
     }
   });
+  document.querySelector("#print-detail").addEventListener("click", () => window.print());
 }
-
-function renderResults() {
-  const query = normalizeText(searchInput.value);
-  const selectedStatus = statusFilter.value;
-
-  const results = hadithData.filter(item => {
-    const statusMatches =
-      selectedStatus === "all" || getStatus(item) === selectedStatus;
-
-    const queryMatches =
-      !query || searchableText(item).includes(query);
-
-    return statusMatches && queryMatches;
-  });
-
-  resultsList.replaceChildren();
-  emptyState.classList.toggle("hidden", results.length !== 0);
-  resultCount.textContent = `মোট ${results.length}টি রেকর্ড পাওয়া গেছে।`;
-
-  results.forEach(item => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className =
-      `result-card${item.id === activeId ? " selected" : ""}`;
-
-    const title = document.createElement("h3");
-    title.textContent = item.title || item.collection || "হাদীস";
-
-    const arabic = document.createElement("div");
-    arabic.className = "arabic-snippet";
-    arabic.lang = "ar";
-    arabic.dir = "rtl";
-    arabic.textContent = item.arabic || "";
-
-    const reference = document.createElement("p");
-    reference.textContent =
-      `${item.collection || "উৎস উল্লেখ নেই"} — ${item.reference || "রেফারেন্স নেই"}`;
-
-    const badge = document.createElement("p");
-    badge.textContent = getStatus(item) === "needs-review"
-      ? "আরও যাচাই প্রয়োজন"
-      : "উৎস সংযুক্ত; মান স্বয়ংক্রিয়ভাবে নিশ্চিত নয়";
-
-    button.append(title, arabic, reference, badge);
-
-    button.addEventListener("click", () => {
-      activeId = item.id;
-      renderResults();
-      renderDetail(item);
-    });
-
-    resultsList.appendChild(button);
-  });
-
-  if (activeId && !results.some(item => item.id === activeId)) {
-    activeId = null;
-    renderPlaceholder();
+function showToast(message) {
+  let toast = document.querySelector(".toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "toast";
+    document.body.appendChild(toast);
   }
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.setTimeout(() => toast.classList.remove("show"), 2200);
 }
-
 async function startApp() {
-  resultCount.textContent = "ডেমো ডেটা লোড হচ্ছে…";
-
   try {
     const response = await fetch("./data/hadith-demo.json");
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`ডেটা ফাইল লোড হয়নি (${response.status})`);
     const data = await response.json();
-
-    if (!Array.isArray(data)) {
-      throw new Error("JSON ফাইলে array থাকা দরকার");
-    }
-
+    if (!Array.isArray(data)) throw new Error("JSON ডেটা array আকারে নেই");
     hadithData = data.map((item, index) => ({
       ...item,
-      id: item.id || `record-${index + 1}`
+      id: item.id || `record-${index + 1}`,
+      status: item.status || ((item.sourceUrl || item.source_url) ? "source-listed" : "needs-review")
     }));
-
     renderResults();
+    if (hadithData.length) renderDetail(hadithData[0]);
+    const dupes = duplicateGroups(hadithData).length;
+    if (dupes) resultCount.textContent += ` • ${dupes}টি সম্ভাব্য ডুপ্লিকেট-গ্রুপ`;
   } catch (error) {
-    console.error("Hadith data loading error:", error);
-    resultCount.textContent =
-      "ডেটা লোড হয়নি। JSON ফাইলের অবস্থান ও গঠন পরীক্ষা করুন।";
-    resultsList.replaceChildren();
-    emptyState.classList.add("hidden");
+    console.error(error);
+    resultCount.textContent = "ডেটা লোড হয়নি। data/hadith-demo.json ফাইল ও GitHub Pages প্রকাশ পরীক্ষা করুন।";
+    resultsList.innerHTML = `<p class="error-message">ডেমো ডেটা পড়া যায়নি। ফাইলের নাম, JSON ফরম্যাট এবং প্রকাশের অবস্থা পরীক্ষা করুন।</p>`;
   }
 }
-
-form.addEventListener("submit", event => {
-  event.preventDefault();
-  renderResults();
-});
-
+form.addEventListener("submit", event => { event.preventDefault(); renderResults(); });
+searchInput.addEventListener("input", renderResults);
 statusFilter.addEventListener("change", renderResults);
-
 document.querySelectorAll("[data-query]").forEach(button => {
   button.addEventListener("click", () => {
     searchInput.value = button.dataset.query;
     renderResults();
+    searchInput.focus();
   });
 });
-
 startApp();
-  
