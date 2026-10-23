@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123d32">
+  <meta name="description" content="হাদীসের উৎস, রেফারেন্স ও তাহকীক-সংক্রান্ত তথ্য অনুসন্ধানের প্রাথমিক ডেমো।">
+  <title>হাদীস গবেষণা | Hadith Research</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">ح</div>
+      <div>
+        <div class="brand-title">হাদীস গবেষণা</div>
+        <div class="brand-subtitle">Hadith Research & Verification</div>
+      </div>
+    </div>
+    <a class="header-link" href="#about">প্রকল্প সম্পর্কে</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">দলিলভিত্তিক অনুসন্ধান</p>
+      <h1>হাদীস খুঁজুন, উৎস যাচাই করুন</h1>
+      <p class="hero-copy">আরবি ইবারত, বাংলা শব্দ বা হাদীসের রেফারেন্স দিয়ে অনুসন্ধান করুন। প্রতিটি ফলাফলে উৎস ও যাচাই-অবস্থা আলাদাভাবে দেখানো হবে।</p>
+
+      <form id="search-form" class="search-form">
+        <label class="sr-only" for="search-input">হাদীস অনুসন্ধান</label>
+        <input id="search-input" type="search" placeholder="আরবি, বাংলা বা রেফারেন্স লিখুন…" autocomplete="off">
+        <button type="submit">অনুসন্ধান</button>
+      </form>
+      <div class="search-hints">
+        <button class="hint" type="button" data-query="إنما الأعمال بالنيات">আরবি উদাহরণ</button>
+        <button class="hint" type="button" data-query="নিয়তের">বাংলা উদাহরণ</button>
+        <button class="hint" type="button" data-query="বুখারী ১">রেফারেন্স উদাহরণ</button>
+      </div>
+    </section>
+
+    <div class="notice" role="note">
+      <strong>গুরুত্বপূর্ণ:</strong> এটি প্রাথমিক ডেমো। এখানে অল্প কিছু উদাহরণ ডেটা আছে; এটিকে পূর্ণাঙ্গ হাদীস ডেটাবেস বা স্বয়ংক্রিয় তাহকীক হিসেবে ব্যবহার করবেন না।
+    </div>
+
+    <section class="workspace" aria-label="অনুসন্ধানের ফলাফল">
+      <div class="results-panel">
+        <div class="section-heading">
+          <div>
+            <h2>অনুসন্ধানের ফলাফল</h2>
+            <p id="result-count" class="muted">ডেমো ডেটা লোড হচ্ছে…</p>
+          </div>
+          <select id="status-filter" aria-label="যাচাই-অবস্থা অনুযায়ী ফিল্টার">
+            <option value="all">সব অবস্থা</option>
+            <option value="source-listed">উৎস সংযুক্ত</option>
+            <option value="needs-review">আরও যাচাই প্রয়োজন</option>
+          </select>
+        </div>
+        <div id="results-list" class="results-list"></div>
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-icon">⌕</div>
+          <h3>কোনো মিল পাওয়া যায়নি</h3>
+          <p>অন্য বানান, আরবি ইবারতের ছোট অংশ বা রেফারেন্স দিয়ে চেষ্টা করুন। না পাওয়া মানেই হাদীসটি জাল নয়।</p>
+        </div>
+      </div>
+
+      <aside id="detail-panel" class="detail-panel">
+        <div class="detail-placeholder">
+          <div class="placeholder-icon">📖</div>
+          <h2>একটি ফলাফল নির্বাচন করুন</h2>
+          <p>হাদীসের মূল পাঠ, উৎস, রেফারেন্স ও গবেষণা-অবস্থা এখানে দেখা যাবে।</p>
+        </div>
+      </aside>
+    </section>
+
+    <section id="about" class="about-section">
+      <h2>এই ডেমো কী করে?</h2>
+      <div class="about-grid">
+        <article class="about-card">
+          <span class="card-icon">⌕</span>
+          <h3>টেক্সট সার্চ</h3>
+          <p>ছোট ডেমো ডেটার মধ্যে আরবি ও বাংলা শব্দ এবং রেফারেন্স খোঁজে।</p>
+        </article>
+        <article class="about-card">
+          <span class="card-icon">📚</span>
+          <h3>উৎস প্রদর্শন</h3>
+          <p>রেকর্ডে সংরক্ষিত গ্রন্থ ও রেফারেন্স আলাদাভাবে দেখায়।</p>
+        </article>
+        <article class="about-card">
+          <span class="card-icon">✓</span>
+          <h3>সতর্ক যাচাই</h3>
+          <p>ডেটাবেসে তথ্য না থাকলে নিজে থেকে কোনো হুকুম তৈরি করে না।</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <p>Hadith Research — মুক্ত-উৎস প্রাথমিক প্রকল্প</p>
+      <p class="muted">প্রকাশের আগে ডেটা, অনুবাদ, নম্বর ও ব্যবহারের অনুমতি যাচাই করুন।</p>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
