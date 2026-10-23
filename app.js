@@ -199,3 +199,4 @@ document.querySelectorAll("[data-query]").forEach(button => {
 });
 
 renderResults();
+      
