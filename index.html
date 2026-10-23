@@ -1,99 +1,400 @@
-<!doctype html>
-<html lang="bn">
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#123d32">
-  <meta name="description" content="বাংলা ও আরবি হাদিস অনুসন্ধান, রেফারেন্স যাচাই ও গবেষণা উৎসের সহায়ক প্ল্যাটফর্ম।">
-  <title>হাদিস গবেষণা | Hadith Research Platform</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Hadith Research Guide | হাদিস গবেষণা নির্দেশিকা</title>
+<meta name="description" content="হাদিস অনুসন্ধান, তাকরিজ ও তাহকিকের বিনামূল্যের বাংলা নির্দেশিকা।">
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#172033; --muted:#5b6577;
+  --brand:#0f6b5f; --brand-2:#0b4f46; --line:#e3e7ee; --accent:#b7791f;
+  --radius:16px; --shadow:0 6px 20px rgba(20,30,50,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Noto Sans Bengali","Hind Siliguri",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  line-height:1.7;
+}
+a{color:var(--brand)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:3px solid #7cc6b8; outline-offset:2px; border-radius:6px;
+}
+.container{max-width:1100px;margin:auto;padding:0 16px}
+header{
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; padding:42px 0 34px;
+}
+header h1{margin:0 0 8px;font-size:clamp(1.7rem,4vw,2.5rem)}
+header p{margin:0;opacity:.92;font-size:1.05rem}
+.badge{
+  display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);
+  padding:4px 12px;border-radius:999px;font-size:.85rem;margin-bottom:14px
+}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+nav .container{display:flex;gap:8px;overflow-x:auto;padding:10px 16px}
+nav a{
+  white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:600;
+  padding:8px 12px;border-radius:999px;border:1px solid transparent
+}
+nav a:hover{background:#eef6f4;color:var(--brand-2)}
+section{padding:34px 0}
+h2{font-size:clamp(1.35rem,3vw,1.8rem);margin:0 0 6px}
+.section-sub{color:var(--muted);margin:0 0 22px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px;margin-bottom:18px
+}
+.card h3{margin:0 0 6px;font-size:1.25rem}
+.card .meta{color:var(--muted);font-size:.95rem;margin:0 0 14px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 18px}
+.btn{
+  display:inline-block;text-decoration:none;border:0;cursor:pointer;
+  padding:10px 16px;border-radius:10px;font-weight:700;font-size:.95rem;
+  font-family:inherit;transition:.15s ease
+}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-2)}
+.btn-secondary{background:#eef6f4;color:var(--brand-2);border:1px solid #cfe4df}
+.btn-secondary:hover{background:#e2efec}
+.btn[aria-expanded="true"]{background:var(--brand-2);color:#fff}
+.guide{display:none;border-top:1px dashed var(--line);padding-top:16px;margin-top:14px}
+.guide.open{display:block}
+ol,ul{padding-left:22px}
+li{margin:6px 0}
+.arabic{
+  direction:rtl;text-align:right;font-size:1.2rem;
+  font-family:"Noto Naskh Arabic","Amiri","Traditional Arabic",serif;
+  background:#f8f6ef;border:1px solid #eadfc8;border-radius:12px;padding:12px 14px;margin:10px 0
+}
+.note{
+  background:#fff8e6;border:1px solid #f0d9a5;border-left:5px solid var(--accent);
+  border-radius:10px;padding:12px 14px;margin:12px 0
+}
+.warning{
+  background:#fff1f1;border:1px solid #f3c2c2;border-left:5px solid #c0392b;
+  border-radius:10px;padding:12px 14px;margin:12px 0
+}
+.tag{
+  display:inline-block;background:#eef6f4;color:var(--brand-2);
+  border:1px solid #cfe4df;border-radius:999px;padding:3px 10px;font-size:.8rem;margin:2px 4px 2px 0
+}
+.searchbar{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;margin-bottom:22px
+}
+.searchbar label{font-weight:700;display:block;margin-bottom:8px}
+.controls{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:720px){.controls{grid-template-columns:2fr 1fr}}
+input[type="search"],select{
+  width:100%;padding:12px;border:1px solid #cfd6e1;border-radius:10px;font:inherit;background:#fff
+}
+#noResult{display:none;color:var(--muted);text-align:center;padding:24px}
+.grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+.term{border-left:4px solid var(--brand);padding-left:14px;margin-bottom:14px}
+.term strong{display:block}
+.term .ar{direction:rtl;display:block;text-align:right;font-size:1.15rem}
+footer{
+  background:#10231f;color:#dce9e6;padding:28px 0;margin-top:30px;font-size:.95rem
+}
+footer a{color:#a8e0d3}
+.skip-link{
+  position:absolute;left:-9999px;top:0;background:#fff;color:var(--brand);
+  padding:10px 14px;border-radius:0 0 10px 0;z-index:100
+}
+.skip-link:focus{left:0}
+details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+summary{cursor:pointer;padding:12px 14px;font-weight:700}
+details[open] summary{border-bottom:1px solid var(--line)}
+details .inner{padding:12px 14px}
+@media print{
+  nav,.searchbar,.btn{display:none}
+  .guide{display:block!important}
+  body{background:#fff}
+}
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="#" aria-label="হাদিস গবেষণা হোম">
-      <span class="brand-mark" aria-hidden="true">ح</span>
-      <span><strong class="brand-title">হাদিস গবেষণা</strong><small class="brand-subtitle">Hadith Research Platform</small></span>
-    </a>
-    <nav class="top-nav">
-      <a href="#resources">গবেষণা উৎস</a>
-      <a href="#guide">ব্যবহার নির্দেশিকা</a>
-      <a href="#about">প্রকল্প সম্পর্কে</a>
-    </nav>
-  </header>
+<a class="skip-link" href="#sources">মূল কন্টেন্টে যান</a>
 
-  <main>
-    <section class="hero">
-      <p class="eyebrow">দলিলভিত্তিক অনুসন্ধান • সতর্ক যাচাই</p>
-      <h1>হাদিস খুঁজুন, উৎস মিলিয়ে দেখুন</h1>
-      <p class="hero-copy">আরবি ইবারত, বাংলা শব্দ, গ্রন্থের নাম বা রেফারেন্স দিয়ে স্থানীয় ডেমো ডেটা অনুসন্ধান করুন। গবেষণার জন্য নির্ভরযোগ্য বাহ্যিক উৎসও এক জায়গা থেকে খুলতে পারবেন।</p>
-      <form id="search-form" class="search-form">
-        <label class="sr-only" for="search-input">হাদিস অনুসন্ধান</label>
-        <input id="search-input" type="search" placeholder="আরবি, বাংলা বা রেফারেন্স লিখুন…" autocomplete="off">
-        <button type="submit">অনুসন্ধান</button>
-      </form>
-      <div class="search-hints">
-        <button class="hint" type="button" data-query="إنما الأعمال بالنيات">আরবি উদাহরণ</button>
-        <button class="hint" type="button" data-query="নিয়ত">বাংলা উদাহরণ</button>
-        <button class="hint" type="button" data-query="বুখারী ১">রেফারেন্স উদাহরণ</button>
-      </div>
-    </section>
+<header>
+  <div class="container">
+    <span class="badge">সম্পূর্ণ বিনামূল্যে • কোনো API বা অ্যাকাউন্ট প্রয়োজন নেই</span>
+    <h1>Free Hadith Research Guide</h1>
+    <p>হাদিস অনুসন্ধান, তাকরিজ ও তাহকিকের বিনামূল্যের বাংলা নির্দেশিকা</p>
+  </div>
+</header>
 
-    <div class="notice" role="note">
-      <strong>গুরুত্বপূর্ণ সতর্কতা:</strong> এটি ছোট ডেমো ডেটাসহ একটি গবেষণা-সহায়ক। এটি পূর্ণাঙ্গ হাদিস ডেটাবেস নয় এবং স্বয়ংক্রিয়ভাবে হাদিসের মান নির্ধারণ করে না। “উৎস সংযুক্ত” মানে শুধু রেফারেন্স লিংক আছে—স্বতন্ত্র তাহকীক সম্পন্ন হয়েছে, এমন নয়।
+<nav aria-label="প্রধান নেভিগেশন">
+  <div class="container">
+    <a href="#sources">উৎসসমূহ</a>
+    <a href="#verification">হাদিস যাচাই</a>
+    <a href="#glossary">আরবি পরিভাষা</a>
+    <a href="#ethics">সতর্কতা</a>
+  </div>
+</nav>
+
+<main class="container">
+
+<section id="search" aria-labelledby="search-title">
+  <h2 id="search-title">নির্দেশিকার ভেতরে অনুসন্ধান</h2>
+  <p class="section-sub">এই সার্চ শুধু এই ওয়েবপেজের নির্দেশিকা, কার্ড ও তথ্যের মধ্যে কাজ করে। এটি বাইরের কোনো ওয়েবসাইটে সরাসরি হাদিস অনুসন্ধান করে না।</p>
+
+  <div class="searchbar">
+    <label for="q">শব্দ লিখুন, যেমন: <em>Dorar</em>, <em>তাকরিজ</em>, <em>বাংলা অনুবাদ</em>, <em>সনদ</em></label>
+    <div class="controls">
+      <input id="q" type="search" placeholder="নির্দেশিকা খুঁজুন..." aria-describedby="searchHelp">
+      <select id="filter" aria-label="বিষয় অনুযায়ী ফিল্টার">
+        <option value="all">সব উৎস</option>
+        <option value="grade">হাদিসের মান যাচাই</option>
+        <option value="arabic">আরবি মূল পাঠ</option>
+        <option value="bangla">বাংলা অনুবাদ</option>
+        <option value="takhrij">তাকরিজ ও তাহকিক</option>
+        <option value="reference">মূল গ্রন্থ ও রেফারেন্স</option>
+      </select>
     </div>
+    <p id="searchHelp" class="section-sub" style="margin:8px 0 0">ফিল্টার নির্বাচন করলে সংশ্লিষ্ট বিষয়ের নির্দেশিকা আগে দেখানো হবে।</p>
+  </div>
+</section>
 
-    <section class="workspace" aria-label="অনুসন্ধানের ফলাফল">
-      <div class="results-panel">
-        <div class="section-heading">
-          <div><h2>অনুসন্ধানের ফলাফল</h2><p id="result-count" class="muted">ডেমো ডেটা লোড হচ্ছে…</p></div>
-          <select id="status-filter" aria-label="যাচাই-অবস্থা অনুযায়ী ফিল্টার">
-            <option value="all">সব অবস্থা</option>
-            <option value="source-listed">উৎস সংযুক্ত</option>
-            <option value="needs-review">আরও যাচাই প্রয়োজন</option>
-          </select>
+<section id="sources" aria-labelledby="sources-title">
+  <h2 id="sources-title">নির্ভরযোগ্য হাদিস গবেষণার উৎস</h2>
+  <p class="section-sub">প্রতিটি কার্ডে ওয়েবসাইট খোলার লিংক এবং বাংলায় ধাপে ধাপে ব্যবহার-নির্দেশনা রয়েছে।</p>
+
+  <div id="cards">
+
+    <article class="card source" data-tags="grade arabic reference takhrij dorar arabic-search">
+      <h3>Dorar — الدرر السنية</h3>
+      <p class="meta">হাদিসের মান, ব্যাখ্যা ও গবেষণামূলক তথ্য অনুসন্ধানের আরবি প্ল্যাটফর্ম।</p>
+      <div>
+        <span class="tag">হাদিসের মান যাচাই</span>
+        <span class="tag">আরবি অনুসন্ধান</span>
+        <span class="tag">মূল্যায়ন</span>
+        <span class="tag">তাকরিজ</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://dorar.net/hadith" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন</a>
+        <button class="btn btn-secondary toggle" aria-expanded="false" aria-controls="guide-dorar">বাংলা নির্দেশিকা দেখুন</button>
+      </div>
+
+      <div class="guide" id="guide-dorar">
+        <h4>অনুসন্ধানের ধাপ</h4>
+        <ol>
+          <li><a href="https://dorar.net/hadith" target="_blank" rel="noopener noreferrer">Dorar-এর হাদিস অনুসন্ধান পৃষ্ঠা</a> খুলুন।</li>
+          <li>সার্চ বক্সে হাদিসের আরবি শব্দ বা বাক্যাংশ লিখুন। সম্ভব হলে পুরো বাক্যাংশ ব্যবহার করুন।</li>
+          <li>ফলাফলে হাদিসের পাঠ, সম্ভাব্য উৎস, বর্ণনা এবং মুহাদ্দিসদের মূল্যায়ন দেখুন।</li>
+          <li>প্রতিটি ফলাফলে কোন আলেম কী মূল্যায়ন দিয়েছেন তা আলাদাভাবে নোট করুন।</li>
+          <li>একই হাদিসের একাধিক বর্ণনা বা ভিন্ন মূল্যায়ন থাকলে সবগুলো তুলনা করুন।</li>
+        </ol>
+
+        <h4>আরবি অনুসন্ধানের উদাহরণ</h4>
+        <p class="arabic">إنما الأعمال بالنيات</p>
+        <p>এই বাক্যাংশ দিয়ে অনুসন্ধান করলে সংশ্লিষ্ট হাদিস, তার উৎস ও মূল্যায়ন সংক্রান্ত ফলাফল পাওয়ার সম্ভাবনা বাড়ে।</p>
+
+        <h4>ফলাফল বোঝার পদ্ধতি</h4>
+        <ul>
+          <li>মুহাদ্দিসের নাম, তাঁর মূল্যায়ন এবং মূল্যায়নের ভিত্তি খুঁজে দেখুন।</li>
+          <li>“সহিহ”, “হাসান”, “দুর্বল” ইত্যাদি শব্দ যে প্রসঙ্গে এসেছে তা পড়ুন।</li>
+          <li>মূল্যায়নের সূত্র বা গ্রন্থের নাম থাকলে সেটি আলাদা করে যাচাই করুন।</li>
+        </ul>
+
+        <h4>মূল গ্রন্থ ও রেফারেন্স</h4>
+        <p>গ্রন্থের নাম, খণ্ড, পৃষ্ঠা বা হাদিস নম্বর পেলে সেগুলো সংরক্ষণ করুন। পরে শামেলা বা মূল হাদিসগ্রন্থে সেই রেফারেন্স মিলিয়ে দেখুন।</p>
+
+        <h4>সাধারণ ভুল ও সতর্কতা</h4>
+        <div class="warning">
+          শুধু একটি ওয়েবসাইটের ফলাফল দেখে হাদিস “সহিহ” বা “দুর্বল” বলে চূড়ান্ত সিদ্ধান্তে পৌঁছাবেন না। মূল্যায়নের মূল সূত্র ও অন্যান্য বর্ণনা যাচাই করুন।
         </div>
-        <div id="results-list" class="results-list"></div>
-        <div id="empty-state" class="empty-state hidden">
-          <div class="empty-icon">⌕</div><h3>কোনো মিল পাওয়া যায়নি</h3>
-          <p>অন্য বানান, আরবি ইবারতের ছোট অংশ বা রেফারেন্স দিয়ে চেষ্টা করুন। ফলাফল না পাওয়া মানেই হাদিসটি জাল নয়।</p>
+      </div>
+    </article>
+
+    <article class="card source" data-tags="arabic bangla reference grade sunnah english-search">
+      <h3>Sunnah.com</h3>
+      <p class="meta">প্রধান হাদিস সংকলনগুলো আরবি মূল পাঠ ও ইংরেজি অনুবাদসহ পড়া ও অনুসন্ধানের সুবিধা।</p>
+      <div>
+        <span class="tag">আরবি মূল পাঠ</span>
+        <span class="tag">ইংরেজি অনুবাদ</span>
+        <span class="tag">গ্রন্থ ও হাদিস নম্বর</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://sunnah.com/" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন</a>
+        <button class="btn btn-secondary toggle" aria-expanded="false" aria-controls="guide-sunnah">বাংলা নির্দেশিকা দেখুন</button>
+      </div>
+
+      <div class="guide" id="guide-sunnah">
+        <h4>অনুসন্ধানের ধাপ</h4>
+        <ol>
+          <li><a href="https://sunnah.com/" target="_blank" rel="noopener noreferrer">Sunnah.com</a> খুলুন।</li>
+          <li>আরবি শব্দ, ইংরেজি শব্দ বা বাক্যাংশ দিয়ে অনুসন্ধান করুন।</li>
+          <li>নির্দিষ্ট গ্রন্থ জানা থাকলে সেই গ্রন্থ নির্বাচন করে অধ্যায় বা হাদিস নম্বর অনুযায়ী খুঁজুন।</li>
+          <li>ফলাফলে আরবি মূল পাঠ ও ইংরেজি অনুবাদ পাশাপাশি তুলনা করুন।</li>
+          <li>গ্রন্থের নাম, বই/কিতাব, অধ্যায় এবং হাদিস নম্বর কপি করে রাখুন।</li>
+        </ol>
+
+        <h4>গ্রন্থ ও রেফারেন্স সংরক্ষণ</h4>
+        <p>যেমন লিখুন: <strong>Sahih al-Bukhari, Book/Kitab, Hadith number</strong>। পরে এই রেফারেন্স দিয়ে অন্য সংস্করণ বা গবেষণা-উৎসে একই হাদিস খুঁজে দেখা সহজ হবে।</p>
+
+        <h4>হাদিসের মান যাচাই</h4>
+        <p>Sunnah.com মূলত হাদিস পাঠ, সংকলন ও অনুবাদ পড়ার সুবিধাজনক। তাই হাদিসের মান নির্ধারণের জন্য Dorar, শামেলায় উপলব্ধ মুহাদ্দিসদের গ্রন্থ বা অন্য নির্ভরযোগ্য তাহকিক-উৎসও দেখুন।</p>
+
+        <div class="note">
+          অনুবাদ বোঝার সহায়ক, কিন্তু গবেষণার জন্য সম্ভব হলে আরবি মূল পাঠ ও প্রসঙ্গ অবশ্যই দেখুন।
         </div>
       </div>
-      <aside id="detail-panel" class="detail-panel">
-        <div class="detail-placeholder"><div class="placeholder-icon">📖</div><h2>একটি ফলাফল নির্বাচন করুন</h2><p>মূল পাঠ, উৎস, রেফারেন্স ও গবেষণা-অবস্থা এখানে দেখা যাবে।</p></div>
-      </aside>
-    </section>
+    </article>
 
-    <section id="resources" class="section-block">
-      <div class="section-intro"><p class="eyebrow dark">গবেষণার সহায়ক</p><h2>হাদিস গবেষণার বাহ্যিক উৎস</h2><p>প্রতিটি উৎস নতুন ট্যাবে খুলবে। ফলাফল ও গ্রেড নিজে যাচাই করুন; উৎসের লিংক থাকা মানেই ডেটাবেস সরাসরি সংযুক্ত নয়।</p></div>
-      <div class="resource-grid">
-        <article class="resource-card"><span class="resource-number">01</span><h3>Ad-Durar as-Saniyyah</h3><p>হাদিস অনুসন্ধান ও তাহকীক-সংক্রান্ত তথ্যের জন্য।</p><a href="https://dorar.net/hadith" target="_blank" rel="noopener noreferrer">হাদিস অনুসন্ধান ↗</a><a href="https://dorar.net/api-services/hadith" target="_blank" rel="noopener noreferrer">API ডকুমেন্টেশন ↗</a></article>
-        <article class="resource-card"><span class="resource-number">02</span><h3>Sunnah.com</h3><p>হাদিসের পাঠ, অনুবাদ, গ্রন্থ ও নম্বরের রেফারেন্স।</p><a href="https://sunnah.com" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন ↗</a><a href="https://sunnah.com/developers" target="_blank" rel="noopener noreferrer">Developer তথ্য ↗</a></article>
-        <article class="resource-card"><span class="resource-number">03</span><h3>আল-মাকতাবা আশ-শামিলাহ</h3><p>আরবি ইসলামি গ্রন্থ ও মূল উৎস অনুসন্ধান।</p><a href="https://shamela.ws" target="_blank" rel="noopener noreferrer">গ্রন্থাগার খুলুন ↗</a></article>
-        <article class="resource-card"><span class="resource-number">04</span><h3>iHadis</h3><p>বাংলা ভাষায় হাদিস ও অনুবাদ অনুসন্ধান।</p><a href="https://ihadis.com" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন ↗</a></article>
+    <article class="card source" data-tags="arabic reference takhrij grade shamela library">
+      <h3>Al-Maktaba al-Shamela — المكتبة الشاملة</h3>
+      <p class="meta">বিশাল আরবি ডিজিটাল গ্রন্থাগার; মূল হাদিসগ্রন্থ, শরহ, তাকরিজ ও তাহকিক-সংক্রান্ত বই অনুসন্ধানে সহায়ক।</p>
+      <div>
+        <span class="tag">আরবি গ্রন্থাগার</span>
+        <span class="tag">তাকরিজ</span>
+        <span class="tag">তাহকিক</span>
+        <span class="tag">সনদ</span>
       </div>
-    </section>
-
-    <section id="guide" class="section-block guide-block">
-      <div class="section-intro"><p class="eyebrow dark">ধাপে ধাপে</p><h2>বাংলা ব্যবহার নির্দেশিকা</h2></div>
-      <ol class="guide-list">
-        <li><strong>ছোট অংশ দিয়ে খুঁজুন:</strong> আরবি ইবারত বা বাংলা অনুবাদের কয়েকটি অনন্য শব্দ লিখুন।</li>
-        <li><strong>রেফারেন্স মিলিয়ে নিন:</strong> গ্রন্থের নাম, কিতাব/অধ্যায়, হাদিস নম্বর এবং সংস্করণ নোট করুন।</li>
-        <li><strong>একাধিক উৎস দেখুন:</strong> প্রাসঙ্গিক হলে বাহ্যিক গবেষণা উৎসগুলো খুলে পাঠ ও তথ্য তুলনা করুন।</li>
-        <li><strong>গ্রেডের প্রমাণ লিখুন:</strong> কে, কোন গ্রন্থে, কী পদ্ধতিতে হাদিসের মান নির্ধারণ করেছেন—সেই তথ্য ছাড়া নিজের অনুমানে গ্রেড দেবেন না।</li>
-        <li><strong>ডুপ্লিকেট সতর্কতা দেখুন:</strong> একই রেফারেন্স বা একরকম পাঠের রেকর্ড চিহ্নিত হতে পারে। একই পাঠ হলেই একই সনদ বা একই হাদিস প্রমাণিত হয় না।</li>
-      </ol>
-    </section>
-
-    <section id="about" class="section-block about-section">
-      <div class="section-intro"><p class="eyebrow dark">প্রকল্প সম্পর্কে</p><h2>গবেষণায় সহায়তা, চূড়ান্ত রায় নয়</h2><p>এই ওয়েব অ্যাপটি ব্রাউজারে চলে এবং GitHub Pages-এ প্রকাশ করা যায়। বর্তমানে ডেমো ডেটা ব্যবহার করা হয়। বহিরাগত সাইটের ডেটাবেস, API বা স্বয়ংক্রিয় তাহকীক এখানে চালু নেই।</p></div>
-      <div class="about-grid">
-        <article class="about-card"><span class="card-icon">⌕</span><h3>স্থানীয় টেক্সট সার্চ</h3><p>ডেমো রেকর্ডের আরবি, বাংলা, গ্রন্থ ও রেফারেন্স খোঁজে।</p></article>
-        <article class="about-card"><span class="card-icon">⧉</span><h3>ডুপ্লিকেট সতর্কতা</h3><p>একই রেফারেন্স বা স্বাভাবিকীকৃত পাঠের সম্ভাব্য মিল দেখায়। এটি চূড়ান্ত হাদিস-পরিচয় নির্ধারণ নয়।</p></article>
-        <article class="about-card"><span class="card-icon">✓</span><h3>সতর্ক যাচাই</h3><p>প্রমাণ না থাকলে নিজে থেকে সহিহ, যঈফ বা মাওযূর হুকুম তৈরি করে না।</p></article>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://shamela.ws" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন</a>
+        <a class="btn btn-secondary" href="https://shamela.ws/page/download" target="_blank" rel="noopener noreferrer">ডাউনলোড পৃষ্ঠা</a>
+        <button class="btn btn-secondary toggle" aria-expanded="false" aria-controls="guide-shamela">বাংলা নির্দেশিকা দেখুন</button>
       </div>
-    </section>
-    <footer><p>Hadith Research Platform · মুক্ত-উৎস প্রাথমিক প্রকল্প</p><p class="muted">প্রকাশের আগে ডেটা, অনুবাদ, রেফারেন্স, লাইসেন্স ও ব্যবহারের অনুমতি যাচাই করুন।</p></footer>
-  </main>
-  <script src="app.js"></script>
-</body>
-</html>
+
+      <div class="guide" id="guide-shamela">
+        <h4>অনুসন্ধানের ধাপ</h4>
+        <ol>
+          <li><a href="https://shamela.ws" target="_blank" rel="noopener noreferrer">শামেলা</a> খুলুন অথবা প্রয়োজনে <a href="https://shamela.ws/page/download" target="_blank" rel="noopener noreferrer">ডাউনলোড পৃষ্ঠা</a> থেকে উপযুক্ত সংস্করণ দেখুন।</li>
+          <li>হাদিসের আরবি শব্দ বা স্বতন্ত্র বাক্যাংশ দিয়ে সাধারণ অনুসন্ধান করুন।</li>
+          <li>ফলাফলে মূল হাদিসগ্রন্থ, শরহ, তাকরিজ ও তাহকিক-সংক্রান্ত বই আলাদা করে চিনুন।</li>
+          <li>লেখক, গ্রন্থের নাম, খণ্ড, পৃষ্ঠা, অধ্যায় ও হাদিস নম্বর পেলে নোট করুন।</li>
+          <li>একই হাদিসের অন্য বর্ণনা, সনদ ও সমর্থনকারী বর্ণনা খুঁজতে ভিন্ন শব্দ বা বাক্যাংশ দিয়ে আবার অনুসন্ধান করুন।</li>
+        </ol>
+
+        <h4>তাকরিজ অনুসন্ধান</h4>
+        <p>তাকরিজের জন্য হাদিসের একটি স্বতন্ত্র আরবি অংশ নিন এবং তা দিয়ে অনুসন্ধান করুন। এরপর ফলাফলে কোন গ্রন্থে, কোন অধ্যায়ে এবং কোন সনদে হাদিসটি এসেছে তা দেখুন।</p>
+
+        <h4>তাহকিক ও মূল্যায়ন</h4>
+        <p>মুহাদ্দিসের নাম, তাঁর গ্রন্থের নাম বা নির্দিষ্ট মূল্যায়ন জানা থাকলে সেই তথ্য দিয়ে অনুসন্ধান করুন। মূল্যায়নের মূল বাক্য, গ্রন্থ ও প্রসঙ্গ সংরক্ষণ করুন।</p>
+
+        <h4>গুরুত্বপূর্ণ পার্থক্য</h4>
+        <div class="note">
+          কোনো বইয়ে হাদিসটি <strong>উদ্ধৃত</strong> থাকা মানেই হাদিসটি <strong>সহিহ</strong>—এমন নয়। উদ্ধৃতি শুধু উৎস নির্দেশ করে; মান নির্ধারণ করতে সনদ, বর্ণনাকারী ও মুহাদ্দিসদের মূল্যায়ন দেখতে হয়।
+        </div>
+
+        <div class="warning">
+          সংস্করণভেদে পৃষ্ঠা ও হাদিস নম্বরে পার্থক্য হতে পারে। তাই রেফারেন্সের সঙ্গে সংস্করণ, মুদ্রণ বা ডিজিটাল সংস্করণের তথ্যও উল্লেখ করুন। শামেলার প্রতিটি বইয়ে একই ধরনের তাকরিজ বা তাহকিক-সুবিধা থাকবে—এমন ধরে নেবেন না।
+        </div>
+      </div>
+    </article>
+
+    <article class="card source" data-tags="bangla arabic reference grade ihadis bengali">
+      <h3>iHadis — আল হাদিস</h3>
+      <p class="meta">বাংলা অনুবাদসহ হাদিস পড়া ও অনুসন্ধানের বাংলা-ভিত্তিক প্ল্যাটফর্ম।</p>
+      <div>
+        <span class="tag">বাংলা অনুবাদ</span>
+        <span class="tag">আরবি মূল পাঠ</span>
+        <span class="tag">হাদিস গ্রন্থ</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://ihadis.com/" target="_blank" rel="noopener noreferrer">ওয়েবসাইট খুলুন</a>
+        <button class="btn btn-secondary toggle" aria-expanded="false" aria-controls="guide-ihadis">বাংলা নির্দেশিকা দেখুন</button>
+      </div>
+
+      <div class="guide" id="guide-ihadis">
+        <h4>অনুসন্ধানের ধাপ</h4>
+        <ol>
+          <li><a href="https://ihadis.com/" target="_blank" rel="noopener noreferrer">iHadis</a> খুলুন।</li>
+          <li>সাইটে উপলব্ধ সার্চ সুবিধা ব্যবহার করে বাংলা বা আরবি শব্দ দিয়ে খুঁজুন।</li>
+          <li>প্রয়োজনে <a href="https://ihadis.com/hadith-books" target="_blank" rel="noopener noreferrer">হাদিস গ্রন্থসমূহের তালিকা</a> থেকে নির্দিষ্ট গ্রন্থ নির্বাচন করুন।</li>
+          <li>আরবি মূল পাঠ ও বাংলা অনুবাদ পাশাপাশি পড়ে তুলনা করুন।</li>
+          <li>গ্রন্থের নাম, হাদিস নম্বর এবং প্রদর্শিত মান-সংক্রান্ত তথ্য সংগ্রহ করুন।</li>
+        </ol>
+
+        <h4>মূল্যায়ন যাচাই</h4>
+        <p>iHadis-এ প্রদর্শিত কোনো মূল্যায়ন দেখলে তার উৎস, মুহাদ্দিস বা গ্রন্থের নাম খুঁজে দেখুন। এরপর Dorar ও শামেলার মতো আরবি গবেষণা-উৎসে একই হাদিস খুঁজে তুলনা করুন।</p>
+
+        <div class="note">
+          বাংলা অনুবাদ বোঝার জন্য খুব সহায়ক, তবে তাকরিজ বা তাহকিকের জন্য আরবি মূল পাঠ ও অতিরিক্ত গবেষণা-উৎস দেখা জরুরি।
+        </div>
+      </div>
+    </article>
+
+  </div>
+  <p id="noResult">আপনার শব্দ বা ফিল্টারের সঙ্গে মেলে এমন কোনো নির্দেশিকা পাওয়া যায়নি।</p>
+</section>
+
+<section id="verification" aria-labelledby="verify-title">
+  <h2 id="verify-title">হাদিস যাচাইয়ের ৮টি ধাপ</h2>
+  <p class="section-sub">এই ধাপগুলো হাদিসের উৎস, বর্ণনা ও মূল্যায়ন সংগঠিতভাবে যাচাই করতে সাহায্য করে।</p>
+
+  <div class="card">
+    <ol>
+      <li>হাদিসের আরবি মূল পাঠ বা নির্ভরযোগ্য অনুবাদ সংগ্রহ করুন।</li>
+      <li>মূল গ্রন্থ ও রেফারেন্স শনাক্ত করুন—গ্রন্থ, অধ্যায়, খণ্ড, পৃষ্ঠা ও হাদিস নম্বর।</li>
+      <li>Dorar-এর মতো গবেষণা-উৎসে হাদিসের মান সম্পর্কে প্রদর্শিত তথ্য খুঁজুন।</li>
+      <li>শামেলা বা অন্য আরবি গ্রন্থাগারে মূল উৎস অনুসন্ধান করুন।</li>
+      <li>প্রয়োজনে অন্যান্য সনদ ও বর্ণনা খুঁজুন।</li>
+      <li>মুহাদ্দিসের নাম, মূল্যায়ন এবং মূল্যায়নের মূল সূত্র নোট করুন।</li>
+      <li>একাধিক মূল্যায়ন থাকলে সেগুলো পৃথকভাবে উল্লেখ করুন।</li>
+      <li>পর্যাপ্ত প্রমাণ না থাকলে “আরও যাচাই প্রয়োজন” লিখুন।</li>
+    </ol>
+    <div class="warning">
+      কোনো একটি ওয়েবসাইটের তথ্যকে স্বয়ংক্রিয়ভাবে চূড়ান্ত সিদ্ধান্ত হিসেবে গ্রহণ করবেন না। হাদিসের মান নির্ধারণ বিশেষজ্ঞের কাজ; এই পেজ কেবল নির্ভরযোগ্য উৎস খুঁজে দেখার পদ্ধতি শেখায়।
+    </div>
+  </div>
+</section>
+
+<section id="glossary" aria-labelledby="glossary-title">
+  <h2 id="glossary-title">আরবি পরিভাষার বাংলা অভিধান</h2>
+  <p class="section-sub">হাদিস গবেষণায় প্রায়ই ব্যবহৃত মূল শব্দগুলোর সহজ ব্যাখ্যা।</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="term"><strong>সহিহ</strong><span class="ar">صحيح</span>সনদ ও বর্ণনাকারীদের দিক থেকে নির্ভরযোগ্য হাদিস।</div>
+      <div class="term"><strong>হাসান</strong><span class="ar">حسن</span>সহিহের চেয়ে কিছুটা নিম্নমানের, তবে গ্রহণযোগ্য মর্যাদার হাদিস।</div>
+      <div class="term"><strong>দুর্বল</strong><span class="ar">ضعيف</span>এমন হাদিস, যাতে সনদ বা বর্ণনাকারীর কোনো শর্তে ঘাটতি থাকে।</div>
+      <div class="term"><strong>জাল / মাওদূ</strong><span class="ar">موضوع</span>রাসূলুল্লাহ (সা.)-এর সঙ্গে ভুলভাবে সংযুক্ত বা রচিত বলে গণ্য হাদিস।</div>
+    </div>
+    <div class="card">
+      <div class="term"><strong>সনদ</strong><span class="ar">إسناد</span>হাদিসটি কারা কারা মাধ্যমে বর্ণনা করেছেন, তার ধারাবাহিক তালিকা।</div>
+      <div class="term"><strong>মতন</strong><span class="ar">متن</span>সনদের পরে আসা হাদিসের মূল বক্তব্য বা পাঠ।</div>
+      <div class="term"><strong>তাকরিজুল হাদিস</strong><span class="ar">تخريج الحديث</span>একটি হাদিস কোন কোন গ্রন্থে, কোন সনদে ও কোন নম্বরে এসেছে তা অনুসন্ধান।</div>
+      <div class="term"><strong>তাহকিকুল হাদিস</strong><span class="ar">تحقيق الحديث</span>হাদিসের পাঠ, উৎস, সনদ ও প্রমাণের গবেষণামূলক যাচাই।</div>
+    </div>
+    <div class="card">
+      <div class="term"><strong>রাবি / বর্ণনাকারী</strong><span class="ar">راوي</span>হাদিসটি যিনি বর্ণনা করেছেন।</div>
+      <div class="term"><strong>জারহ ও তাদিল</strong><span class="ar">جرح وتعديل</span>বর্ণনাকারীদের বিশ্বাসযোগ্যতা ও ত্রুটি মূল্যায়নের হাদিস-শাস্ত্রীয় পদ্ধতি।</div>
+      <div class="term"><strong>শাওয়াহিদ</strong><span class="ar">شواهد</span>একই অর্থ বা বক্তব্য সমর্থনকারী অন্যান্য হাদিস-বর্ণনা।</div>
+      <div class="term"><strong>মুতাবিআত</strong><span class="ar">متابعات</span>মূল বর্ণনাকে সমর্থনকারী অন্যান্য স্বতন্ত্র বর্ণনাপথ।</div>
+    </div>
+  </div>
+</section>
+
+<section id="ethics" aria-labelledby="ethics-title">
+  <h2 id="ethics-title">সাধারণ সতর্কতা</h2>
+  <div class="card">
+    <ul>
+      <li>হাদিসের মূল্যায়ন শুধু একটি সার্চ ফলাফলের ভিত্তিতে না করে একাধিক নির্ভরযোগ্য উৎসে যাচাই করুন।</li>
+      <li>“কোনো বইয়ে হাদিস আছে” এবং “হাদিসটি সহিহ”—এই দুটি এক বিষয় নয়।</li>
+      <li>পৃষ্ঠা ও হাদিস নম্বর সংস্করণভেদে ভিন্ন হতে পারে; সংস্করণের তথ্যও সংরক্ষণ করুন।</li>
+      <li>আরবি না জানলে নির্ভরযোগ্য অনুবাদ ব্যবহার করুন, তবে গুরুত্বপূর্ণ সিদ্ধান্তে আরবি পাঠ ও প্রসঙ্গ দেখার চেষ্টা করুন।</li>
+      <li>ফতোয়া, আইনি বা ধর্মীয় চূড়ান্ত সিদ্ধান্তের জন্য যোগ্য আলেম ও হাদিস গবেষকের পরামর্শ নিন।</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p><strong>Free Hadith Research Guide</strong> — হাদিস অনুসন্ধান, তাকরিজ ও তাহকিকের বিনামূল্যের বাংলা নির্দেশিকা।</p>
+    <p>এই পেজ কোনো হাদিস স্বয়ংক্রিয়ভাবে সংগ্রহ বা যাচাই করে না; এটি কেবল নির্ভরযোগ্য ওয়েবসাইটে যাওয়ার লিংক ও ব্যবহার-নির্দেশনা দেয়।</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const q=document.getElementById('q');
+  const filter=document.getElementById('filter');
+  const cards=Array.from(document.querySelectorAl
